@@ -1,0 +1,77 @@
+==== FOOD CHAIN: PROJECT BRIEF ====
+
+=== OVERVIEW ===
+
+Food Chain is a simulator that is loosely inspired by the evolution simulator featured on the YouTube channel 'Primer'. A video of Primer's simulation in action can be found here: https://youtu.be/0ZGbIKd0XrM
+
+Food Chain will not be nearly as complex, but the way the simulation is handled will be similar. The primary goal with this simulation is to have different organisms that must get their food from different sources. The player will be able to control key values such as spawn rates and energy consumption. While there is no way to 'win' the game, players will find it interesting to tweak the values and see how the outcome of the simulation is affected by changes.
+
+=== GENERAL GAMEPLAY NOTES ===
+
+=== DISTANCE AND SPEED ===
+
+Although there is distance between elements on the board, moving organisms will always reach their destination in sixty frames regardless of the distance traveled.
+
+A realistic simulation would take into account different speeds and some concept of 'foraging efficiency.' However, such concepts would require rather complex pathing and prioritization behavior that is out of the scope of this project, so distance is effectively meaningless in this simulation.
+
+An organism's movement speed is always equal to 'the distance to the target.' When multiplied by a Time.fixedDeltaTime that is equal to 1/60, this should result in all travel operations taking one second.
+
+=== ORGANISMS ===
+
+== STATS ==
+
+= LIFESPAN =
+
+The player is able to set the amount of time each organism spends in its life phases, all measured in seconds.
+
+- Juvenile Phase
+- Mature Phase
+- Elder Phase
+
+= SPAWN RATE =
+
+For grass, this is the number of seconds that must pass before a new instance of grass can spawn anywhere on the board. Animals treat the number a little differently - instead of a global cooldown rate, each animal has its own coolown on reproduction.
+
+Animals must meet three conditions in order to reproduce:
+
+- the respawn cooldown timer is at 0
+- the animal is Mature
+- the animal has a minimum amount of energy, set by the player
+
+When the animal reproduces, it will lose a percentage of energy. This amount is also dictated by the player.
+
+= MINIMUM SPAWN ENERGY =
+
+See above.
+
+= SPAWN COST =
+
+See above.
+
+= ENERGY PER SECOND =
+
+A passive energy drain per second.
+
+= FORAGING THRESHOLD =
+
+If the animal drops below this amount of energy, they will try to eat food.
+
+= ENERGY VALUE =
+
+When this organism is eaten, the organism that ate it will gain this much energy.
+
+== UNIQUE MECHANICS ==
+
+GRASS
+
+Grass is the most basic of the organisms. It does not move. Its spawn location is completely random, with the only limitation being that only one clump of grass may occupy a single grid cell. The only tweakable values associated with grass are 'spawn rate,' 'energy value' and the three lifespan values.
+
+DEER
+
+Deer move around and eat grass. Deer will prefer to eat mature grass, but will eat juvenile or elder grass if there is no mature grass available on the map. Grass that is not Mature is only worth 75% of the energy that it would normally give.
+
+WOLF
+
+Wolves move around and eat deer. Wolves will prefer to eat Elder deer, but if none are available, they will eat Mature deer. Wolves will only eat Juvenile deer as a last resort. (This is not realistic, but a realistic depiction would require that the adult deer are capable of protecting the juveniles. The complexity of a realistic 'battle system' is out of the scope of this project.)
+
+If the wolves have started eating juveniles, both animal species are probably very close to going extinct.
