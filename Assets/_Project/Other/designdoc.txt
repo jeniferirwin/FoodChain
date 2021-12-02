@@ -16,6 +16,12 @@ A realistic simulation would take into account different speeds and some concept
 
 An organism's movement speed is always equal to 'the distance to the target.' When multiplied by a Time.fixedDeltaTime that is equal to 1/60, this should result in all travel operations taking one second.
 
+=== PAUSING ===
+
+In order to run the simulation, the player will hold down the space bar. The simulation will tick away until the player lets go of the space bar. When this happens, the simulation will not pause immediately - it will wait until there are no in-progress feeding operations. To make it easy to detect whether feeding is happening, there will be an interface called ICanFeed attached to deer and wolves. All deer and wolves will be tracked in a List<ICanFeed> and then we can loop through each one asking for the value of the IsFeeding property.
+
+When the simulation detects no feeding happening, then it will pause. The passive energy drain on all animals will stop and they will not age, feed or reproduce until the player presses the space bar again.
+
 === ORGANISMS ===
 
 == STATS ==
@@ -75,3 +81,25 @@ WOLF
 Wolves move around and eat deer. Wolves will prefer to eat Elder deer, but if none are available, they will eat Mature deer. Wolves will only eat Juvenile deer as a last resort. (This is not realistic, but a realistic depiction would require that the adult deer are capable of protecting the juveniles. The complexity of a realistic 'battle system' is out of the scope of this project.)
 
 If the wolves have started eating juveniles, both animal species are probably very close to going extinct.
+
+==== OOP PILLARS INFORMATION ====
+
+=== ENCAPSULATION ===
+
+This pillar will be found in the form of the various stats on each organism. None of the stats can be negative. Organisms will be unaware of most of the stats on other organisms. At the time of this writing, I can only think of three stats that they actually need to be aware of: Life stage, position and energy value of their target.
+
+=== ABSTRACTION ===
+
+Abstraction will be found all over the project, so it is difficult to really give the most 'obvious' examples here (at least in the first writing of this document). Behavior such as energy consumption, aging and foraging will all be handled in discrete methods, and interfaces will be available where appropriate so that one organism can basically just say to another, 'I have eaten you; I don't care how you handle it, just hanlde it.' There will be very little code in each organism's Update() method.
+
+=== INHERITANCE ===
+
+All organisms will inherit from a base 'Organism' class. This class will hold the properties and methods that ALL organisms have, including things like 'juvenile phase length' and Reproduce().
+
+Grass will inherit directly from Organism, as its own functionality will not be much different. We could easily implement a Plant class for Grass and other plants to inherit from, but that's not necessary at this time.
+
+There will be an Animal class that inherits from Organism. The most important distinction that Animal has from Organism is that Animal has a 'food source' field. Deer and Wolf will then inherit from Animal. Deer will have 'Grass' as a food source and Wolf will have 'Deer' as a food source.
+
+=== POLYMORPHISM ===
+
+The main fundamental difference between deer and wolves is that they will have different preferences on the life-stage of their food source, so they will go about choosing their targets in a different way. Optionally, I may program deer to try to choose food sources that are as far away from wolves as possible. Although distance doesn't matter in this simulation, this would be a solid example of the Forage() method being significantly morphed. (Plus, it would look a little bit funny if all the deer were totally fine with walking right up to a wolf and eating next to it.)
