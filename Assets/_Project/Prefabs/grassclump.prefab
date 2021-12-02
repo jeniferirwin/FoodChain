@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3353724}
   - component: {fileID: 2361666}
   m_Layer: 0
-  m_Name: grass-clumb
+  m_Name: grassclump
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
