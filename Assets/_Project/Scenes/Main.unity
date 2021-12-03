@@ -167,6 +167,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85ce4813d5127894b8cca168bda90aab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  testSpawnRate: 2
   uLeftBounds: {x: -20, y: 25, z: 0}
   lRightBounds: {x: 25, y: -20, z: 0}
   grassPrefab: {fileID: 164152, guid: 1093da2b134a65e44b0cb16f24de4b22, type: 3}
