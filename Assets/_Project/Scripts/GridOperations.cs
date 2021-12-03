@@ -39,13 +39,20 @@ namespace FoodChain
         
         private void Update()
         {
+            // ABSTRACTION
+            if (!RespawnOffCooldown()) return;
+            if (emptyCells.Count > 0) FillCell(GetRandomEmptyCell());
+        }
+        
+        private bool RespawnOffCooldown()
+        {
             if (_testSpawnRateTicker > 0)
             {
                 _testSpawnRateTicker -= Time.deltaTime;
-                return;
+                return false;
             }
             _testSpawnRateTicker = testSpawnRate;
-            if (emptyCells.Count > 0) FillCell(GetRandomEmptyCell());
+            return true;
         }
 
         public Vector3Int GetRandomEmptyCell()
