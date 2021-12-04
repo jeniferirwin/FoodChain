@@ -13,7 +13,6 @@ namespace FoodChain.Life
         [SerializeField] private int mainColorSlot;
 
         protected int _currentPhase;
-        protected bool _canReproduce;
         protected Ticker _phaseTicker;
         protected Ticker _reproductionTicker;
         protected bool _isBeingEaten;

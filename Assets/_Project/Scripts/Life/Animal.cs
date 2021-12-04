@@ -14,7 +14,6 @@ namespace FoodChain.Life
         [SerializeField] [Range(0f, 1f)] protected float foragingEnergyThreshold;
 
         protected GameObject _target = null;
-        protected Ticker _reproductionTicker;
         protected Ticker _energyTicker;
         protected Ticker _forageTicker;
         protected float _currentEnergyLevel;
