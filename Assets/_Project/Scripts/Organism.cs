@@ -5,24 +5,23 @@ namespace FoodChain
     public abstract class Organism : MonoBehaviour, ICanBeEaten
     {
         [SerializeField] [Range(0f, 1f)] protected float energyPercentValue;
-        [SerializeField] protected float spawnRate;
+        [SerializeField] protected float reproductionCooldown;
         [SerializeField] protected float[] phaseLengths = new float[3];
         [SerializeField] private Vector3[] ageScales = new Vector3[3];
         [SerializeField] private Material[] ageMaterials = new Material[3];
         [SerializeField] private int mainColorSlot;
 
-
         protected int _currentPhase;
         protected float _phaseTicker;
         protected bool _isBeingEaten;
-        private MeshRenderer rend;
+        private MeshRenderer _rend;
 
         // ENCAPSULATION
 
-        public float SpawnRate
+        public float ReproductionCooldown
         {
-            get { return spawnRate; }
-            set { spawnRate = MustBePositive(value); }
+            get { return reproductionCooldown; }
+            set { reproductionCooldown = MustBePositive(value); }
         }
         
         public float EnergyPercentValue
@@ -52,6 +51,15 @@ namespace FoodChain
             return value;
         }
 
+        protected virtual void Awake()
+        {
+            _currentPhase = 0;
+            _phaseTicker = phaseLengths[_currentPhase];
+            transform.localScale = ageScales[_currentPhase];
+            IsBeingEaten = false;
+            _rend = GetComponent<MeshRenderer>();
+        }
+
         protected virtual void AgeUp()
         {
             if (_currentPhase < 2)
@@ -59,7 +67,7 @@ namespace FoodChain
                 _currentPhase++;
                 _phaseTicker = phaseLengths[_currentPhase];
                 transform.localScale = ageScales[_currentPhase];
-                rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
+                _rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
             }
             else
             {
@@ -83,14 +91,6 @@ namespace FoodChain
             Destroy(gameObject);
         }
         
-        protected virtual void Awake()
-        {
-            _currentPhase = 0;
-            _phaseTicker = phaseLengths[_currentPhase];
-            transform.localScale = ageScales[_currentPhase];
-            IsBeingEaten = false;
-            rend = GetComponent<MeshRenderer>();
-        }
         
         // ABSTRACTION
         protected virtual void HandleAging()

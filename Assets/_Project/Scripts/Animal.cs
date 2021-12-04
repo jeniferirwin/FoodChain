@@ -7,11 +7,11 @@ namespace FoodChain
     {
         [SerializeField] protected GameObject offspringPrefab;
         [SerializeField] protected string foodSourceTag;
+        [SerializeField] [Range(0, 2)] protected int foodSourcePhasePreference;
         [SerializeField] [Range(0f, 1f)] protected float energyUsePerSecond;
         [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyMinimum;
         [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyUse;
         [SerializeField] [Range(0f, 1f)] protected float foragingEnergyThreshold;
-        [SerializeField] protected float reproductionCooldown;
 
         protected GameObject _target = null;
         protected float _currentEnergyLevel;
@@ -47,37 +47,6 @@ namespace FoodChain
             get { return foragingEnergyThreshold; }
             protected set { foragingEnergyThreshold = MustBePercentage(value); }
         }
-        
-
-        
-        protected override void Update()
-        {
-            base.Update();
-            if (EnergyTick()) UseEnergy();
-            if (ReproductionTick()) _canReproduce = true;
-            if (_canReproduce && _currentEnergyLevel > ReproductiveEnergyMinimum)
-            {
-                Reproduce();
-            }
-            if (_currentEnergyLevel < ForagingEnergyThreshold)
-            {
-                if (ForageTick())
-                {
-                    Forage();
-                }
-            }
-        }
-        
-        protected virtual void Reproduce()
-        {
-            _canReproduce = false;
-            _currentEnergyLevel -= ReproductiveEnergyUse;
-            var pos = transform.position;
-            var xOffset = Random.Range(1f,2f);
-            var zOffset = Random.Range(1f,2f);
-            var offspringPos = new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
-            GameObject.Instantiate(offspringPrefab,offspringPos,Quaternion.identity);
-        }
 
         protected override void Awake()
         {
@@ -85,6 +54,19 @@ namespace FoodChain
             base.Awake();
         }
         
+        protected override void Update()
+        {
+            base.Update();
+            if (EnergyTick()) UseEnergy();
+            if (ReproductionTick()) _canReproduce = true;
+
+            if (_canReproduce && _currentEnergyLevel > ReproductiveEnergyMinimum)
+                Reproduce();
+
+            if (_currentEnergyLevel < ForagingEnergyThreshold)
+                if (ForageTick()) Forage();
+        }
+
         protected void FixedUpdate()
         {
             if (_target != null)
@@ -95,7 +77,7 @@ namespace FoodChain
             }
         }
 
-        protected virtual bool EnergyTick()
+        protected bool EnergyTick()
         {
             if (_energyTicker > 0f)
             {
@@ -106,7 +88,7 @@ namespace FoodChain
             return true;
         }
         
-        protected virtual bool ForageTick()
+        protected bool ForageTick()
         {
             if (_forageTicker > 0f)
             {
@@ -117,7 +99,7 @@ namespace FoodChain
             return true;
         }
 
-        protected virtual bool ReproductionTick()
+        protected bool ReproductionTick()
         {
             if (_canReproduce) return false;
             if (_currentPhase != 1) return false;
@@ -130,27 +112,34 @@ namespace FoodChain
             return true;
         }
 
-        protected virtual void UseEnergy()
+        protected void UseEnergy()
         {
             _currentEnergyLevel -= EnergyUsePerSecond;
-            Debug.Log($"{_currentEnergyLevel}");
             if (_currentEnergyLevel <= 0f)
-            {
                 Die();
-            }
         }
 
-        protected virtual void Forage()
+        protected void Forage()
         {
             _target = FindClosestFoodSource();
             if (_target == null) return;
             _moveSpeed = Vector3.Distance(_target.transform.position, gameObject.transform.position);
         }
 
+        protected void Reproduce()
+        {
+            _canReproduce = false;
+            _currentEnergyLevel -= ReproductiveEnergyUse;
+            var pos = transform.position;
+            var xOffset = Random.Range(1f,2f);
+            var zOffset = Random.Range(1f,2f);
+            var offspringPos = new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
+            GameObject.Instantiate(offspringPrefab,offspringPos,Quaternion.identity);
+        }
+
         protected void OnTriggerStay(Collider other)
         {
             if (other.gameObject != _target) return;
-            Debug.Log($"{gameObject.name} is trying to eat...");
             var org = other.gameObject.GetComponent<ICanBeEaten>();
             var energy = org.EnergyPercentValue;
             _currentEnergyLevel += energy;
