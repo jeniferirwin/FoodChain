@@ -1,7 +1,7 @@
 using UnityEngine;
-using System.Collections.Generic;
+using FoodChain.Core;
 
-namespace FoodChain
+namespace FoodChain.Life
 {
     public class Animal : Organism, ICanFeed
     {

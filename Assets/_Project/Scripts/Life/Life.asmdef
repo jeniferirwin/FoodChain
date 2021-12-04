@@ -1,0 +1,16 @@
+{
+    "name": "Life",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7acb296de2dec1a4cbe2e1bc6d6f37b7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

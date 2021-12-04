@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace FoodChain
+namespace FoodChain.Core
 {
     public class GridOperations : MonoBehaviour
     {
