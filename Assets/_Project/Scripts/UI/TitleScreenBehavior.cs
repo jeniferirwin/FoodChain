@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.SceneManagement;
 
-namespace FoodChain
+namespace FoodChain.UI
 {
     public class TitleScreenBehavior : MonoBehaviour
     {
