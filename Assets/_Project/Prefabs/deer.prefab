@@ -114,9 +114,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   energyPercentValue: 0.5
-  spawnRate: 5
+  reproductionCooldown: 15
   phaseLengths:
-  - 30
+  - 15
   - 60
   - 30
   ageScales:
@@ -130,8 +130,8 @@ MonoBehaviour:
   mainColorSlot: 1
   offspringPrefab: {fileID: 1000014060781432}
   foodSourceTag: Plant
+  foodSourcePhasePreference: 0
   energyUsePerSecond: 0.02
   reproductiveEnergyMinimum: 0.5
   reproductiveEnergyUse: 0.2
   foragingEnergyThreshold: 0.8
-  reproductionCooldown: 15
