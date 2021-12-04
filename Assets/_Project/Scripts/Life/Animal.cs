@@ -14,12 +14,11 @@ namespace FoodChain.Life
         [SerializeField] [Range(0f, 1f)] protected float foragingEnergyThreshold;
 
         protected GameObject _target = null;
+        protected Ticker _reproductionTicker;
+        protected Ticker _energyTicker;
+        protected Ticker _forageTicker;
         protected float _currentEnergyLevel;
-        protected float _energyTicker;
-        protected float _forageTicker;
-        protected float _reproductionTicker;
         protected float _moveSpeed;
-        protected bool _canReproduce;
 
         // ENCAPSULATION
         public bool IsFeeding { get; protected set; }
@@ -52,19 +51,31 @@ namespace FoodChain.Life
         {
             _currentEnergyLevel = 1;
             base.Awake();
+            _reproductionTicker = new Ticker(ReproductionCooldown);
+            _forageTicker = new Ticker(1);
+            _energyTicker = new Ticker(1);
         }
         
+        protected override void RunTickers()
+        {
+            base.RunTickers();
+            _energyTicker.Tick();
+            if (_currentPhase == 1) _reproductionTicker.Tick();
+            if (_currentEnergyLevel < ForagingEnergyThreshold) _forageTicker.Tick();
+        }
+
         protected override void Update()
         {
             base.Update();
-            if (EnergyTick()) UseEnergy();
-            if (ReproductionTick()) _canReproduce = true;
 
-            if (_canReproduce && _currentEnergyLevel > ReproductiveEnergyMinimum)
+            if (_energyTicker.IsFinished)
+                UseEnergy();
+
+            if (_reproductionTicker.IsFinished && _currentEnergyLevel > ReproductiveEnergyMinimum)
                 Reproduce();
 
-            if (_currentEnergyLevel < ForagingEnergyThreshold)
-                if (ForageTick()) Forage();
+            if (_currentEnergyLevel < ForagingEnergyThreshold && _forageTicker.IsFinished)
+                Forage();
         }
 
         protected void FixedUpdate()
@@ -77,44 +88,10 @@ namespace FoodChain.Life
             }
         }
 
-        protected bool EnergyTick()
-        {
-            if (_energyTicker > 0f)
-            {
-                _energyTicker -= Time.deltaTime;
-                return false;
-            }
-            _energyTicker = 1f;
-            return true;
-        }
-        
-        protected bool ForageTick()
-        {
-            if (_forageTicker > 0f)
-            {
-                _forageTicker -= Time.deltaTime;
-                return false;
-            }
-            _forageTicker = 1f;
-            return true;
-        }
-
-        protected bool ReproductionTick()
-        {
-            if (_canReproduce) return false;
-            if (_currentPhase != 1) return false;
-            if (_reproductionTicker > 0f)
-            {
-                _reproductionTicker -= Time.deltaTime;
-                return false;
-            }
-            _reproductionTicker = reproductionCooldown;
-            return true;
-        }
-
         protected void UseEnergy()
         {
             _currentEnergyLevel -= EnergyUsePerSecond;
+            _energyTicker.Refresh();
             if (_currentEnergyLevel <= 0f)
                 Die();
         }
@@ -122,13 +99,14 @@ namespace FoodChain.Life
         protected void Forage()
         {
             _target = FindClosestFoodSource();
+            _forageTicker.Refresh();
             if (_target == null) return;
             _moveSpeed = Vector3.Distance(_target.transform.position, gameObject.transform.position);
         }
 
         protected void Reproduce()
         {
-            _canReproduce = false;
+            _reproductionTicker.Refresh();
             _currentEnergyLevel -= ReproductiveEnergyUse;
             var pos = transform.position;
             var xOffset = Random.Range(1f,2f);

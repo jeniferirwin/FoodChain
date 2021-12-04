@@ -13,7 +13,9 @@ namespace FoodChain.Life
         [SerializeField] private int mainColorSlot;
 
         protected int _currentPhase;
-        protected float _phaseTicker;
+        protected bool _canReproduce;
+        protected Ticker _phaseTicker;
+        protected Ticker _reproductionTicker;
         protected bool _isBeingEaten;
         private MeshRenderer _rend;
 
@@ -41,18 +43,35 @@ namespace FoodChain.Life
         protected virtual void Awake()
         {
             _currentPhase = 0;
-            _phaseTicker = phaseLengths[_currentPhase];
+            _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
             transform.localScale = ageScales[_currentPhase];
             IsBeingEaten = false;
             _rend = GetComponent<MeshRenderer>();
         }
+
+        protected virtual void Update()
+        {
+            RunTickers();
+            CheckAging();
+        }
+
+        // ABSTRACTION
+        protected virtual void RunTickers()
+        {
+            _phaseTicker.Tick();
+        }
+
+        public virtual void StartBeingEaten() => IsBeingEaten = true;
+        public virtual void FinishBeingEaten() => Die();
+
+        protected virtual void Die() => Destroy(gameObject);
 
         protected virtual void AgeUp()
         {
             if (_currentPhase < 2)
             {
                 _currentPhase++;
-                _phaseTicker = phaseLengths[_currentPhase];
+                _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
                 transform.localScale = ageScales[_currentPhase];
                 _rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
             }
@@ -62,39 +81,13 @@ namespace FoodChain.Life
             }
         }
 
-        public virtual void StartBeingEaten()
+        protected virtual void CheckAging()
         {
-            IsBeingEaten = true;
-        }
-        
-        public virtual void FinishBeingEaten()
-        {
-            Die();
-        }
-        
-        
-        protected virtual void Die()
-        {
-            Destroy(gameObject);
-        }
-        
-        
-        // ABSTRACTION
-        protected virtual void HandleAging()
-        {
-            if (_phaseTicker > 0)
-            {
-                _phaseTicker -= Time.deltaTime;
-            }
-            else
+            if (_phaseTicker.IsFinished)
             {
                 AgeUp();
+                return;
             }
-        }
-        
-        protected virtual void Update()
-        {
-            HandleAging();
         }
     }
 }
