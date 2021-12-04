@@ -27,25 +27,25 @@ namespace FoodChain
         public float ReproductiveEnergyMinimum
         {
             get { return reproductiveEnergyMinimum; }
-            protected set { reproductiveEnergyMinimum = MustBePercentage(value); }
+            protected set { reproductiveEnergyMinimum = Helpers.MustBePercentage(value); }
         }
         
         public float ReproductiveEnergyUse
         {
             get { return reproductiveEnergyUse; }
-            protected set { reproductiveEnergyUse = MustBePercentage(value); }
+            protected set { reproductiveEnergyUse = Helpers.MustBePercentage(value); }
         }
 
         public float EnergyUsePerSecond
         {
             get { return energyUsePerSecond; }
-            protected set { energyUsePerSecond = MustBePercentage(value); }
+            protected set { energyUsePerSecond = Helpers.MustBePercentage(value); }
         }
         
         public float ForagingEnergyThreshold
         {
             get { return foragingEnergyThreshold; }
-            protected set { foragingEnergyThreshold = MustBePercentage(value); }
+            protected set { foragingEnergyThreshold = Helpers.MustBePercentage(value); }
         }
 
         protected override void Awake()

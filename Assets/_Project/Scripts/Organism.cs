@@ -21,13 +21,13 @@ namespace FoodChain
         public float ReproductionCooldown
         {
             get { return reproductionCooldown; }
-            set { reproductionCooldown = MustBePositive(value); }
+            set { reproductionCooldown = Helpers.MustBePositive(value); }
         }
         
         public float EnergyPercentValue
         {
             get { return energyPercentValue; }
-            set { energyPercentValue = MustBePercentage(value); }
+            set { energyPercentValue = Helpers.MustBePercentage(value); }
         }
         
         public bool IsBeingEaten
@@ -36,20 +36,6 @@ namespace FoodChain
             protected set { _isBeingEaten = value; }
         }
         
-        protected static float MustBePositive(float value)
-        {
-            if (value > 0f)
-                return value;
-            else
-                return 0f;
-        }
-
-        protected float MustBePercentage(float value)
-        {
-            if (value > 1f) return 1f;
-            if (value < 0f) return 0f;
-            return value;
-        }
 
         protected virtual void Awake()
         {
