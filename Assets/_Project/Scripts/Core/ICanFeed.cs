@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FoodChain
+namespace FoodChain.Core
 {
     public interface ICanFeed
     {

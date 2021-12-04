@@ -1,6 +1,7 @@
 using UnityEngine;
+using FoodChain.Core;
 
-namespace FoodChain
+namespace FoodChain.Life
 {
     public abstract class Organism : MonoBehaviour, ICanBeEaten
     {

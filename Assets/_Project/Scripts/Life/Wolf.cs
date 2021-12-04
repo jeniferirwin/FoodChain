@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace FoodChain
+namespace FoodChain.Life
 {
     public class Wolf : Animal
     {

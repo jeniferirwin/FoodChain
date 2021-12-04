@@ -1,6 +1,7 @@
 using UnityEngine;
+using FoodChain.Core;
 
-namespace FoodChain
+namespace FoodChain.Life
 {
     public class Grass : Organism
     {

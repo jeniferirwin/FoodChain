@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace FoodChain
+namespace FoodChain.Player
 {
     public class Panning : MonoBehaviour
     {

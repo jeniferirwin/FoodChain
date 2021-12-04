@@ -1,4 +1,4 @@
-namespace FoodChain
+namespace FoodChain.Core
 {
     // ABSTRACTION
     public static class Helpers
