@@ -109,12 +109,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c332f734e503f84d8dd3cca28491be8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  energyPercentValue: 0.15
+  spawnRate: 2
   phaseLengths:
-  - 15
+  - 10
   - 30
   - 15
-  spawnRate: 2
-  energyPercentValue: 0.15
+  ageScales:
+  - {x: 0.25, y: 0.25, z: 0.25}
+  - {x: 1, y: 1, z: 1}
+  - {x: 0.9, y: 0.9, z: 0.9}
+  ageMaterials:
+  - {fileID: 2100000, guid: d41a8bca790345f49b3ae205465ff2f8, type: 2}
+  - {fileID: 2100000, guid: fb045539f4b18a242aca8e57e88c5cd7, type: 2}
+  - {fileID: 2100000, guid: d07dc9a550022a74792d211f343e0b16, type: 2}
+  mainColorSlot: 0
 --- !u!54 &4597758312237830042
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -4,13 +4,18 @@ namespace FoodChain
 {
     public abstract class Organism : MonoBehaviour, ICanBeEaten
     {
-        [SerializeField] protected float[] phaseLengths = new float[3];
-        [SerializeField] protected float spawnRate;
         [SerializeField] [Range(0f, 1f)] protected float energyPercentValue;
+        [SerializeField] protected float spawnRate;
+        [SerializeField] protected float[] phaseLengths = new float[3];
+        [SerializeField] private Vector3[] ageScales = new Vector3[3];
+        [SerializeField] private Material[] ageMaterials = new Material[3];
+        [SerializeField] private int mainColorSlot;
+
 
         protected int _currentPhase;
         protected float _phaseTicker;
         protected bool _isBeingEaten;
+        private MeshRenderer rend;
 
         // ENCAPSULATION
 
@@ -53,6 +58,8 @@ namespace FoodChain
             {
                 _currentPhase++;
                 _phaseTicker = phaseLengths[_currentPhase];
+                transform.localScale = ageScales[_currentPhase];
+                rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
             }
             else
             {
@@ -78,8 +85,11 @@ namespace FoodChain
         
         protected virtual void Awake()
         {
+            _currentPhase = 0;
             _phaseTicker = phaseLengths[_currentPhase];
+            transform.localScale = ageScales[_currentPhase];
             IsBeingEaten = false;
+            rend = GetComponent<MeshRenderer>();
         }
         
         // ABSTRACTION

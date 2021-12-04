@@ -113,14 +113,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3bc0582bb17590439d37eb16104d03f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  energyPercentValue: 0.5
+  spawnRate: 5
   phaseLengths:
   - 30
   - 60
   - 30
-  spawnRate: 5
-  energyPercentValue: 50
+  ageScales:
+  - {x: 0.5, y: 0.5, z: 0.5}
+  - {x: 1, y: 1, z: 1}
+  - {x: 0.9, y: 0.9, z: 0.9}
+  ageMaterials:
+  - {fileID: 2100000, guid: a7862d5615928c34e868320de65c2777, type: 2}
+  - {fileID: 2100000, guid: 0de74cacf6310c64ca1b6862ba4b219c, type: 2}
+  - {fileID: 2100000, guid: 6e3ac6e47b4d7a44685dfef9bf209413, type: 2}
+  mainColorSlot: 1
+  offspringPrefab: {fileID: 1000014060781432}
   foodSourceTag: Plant
   energyUsePerSecond: 0.02
   reproductiveEnergyMinimum: 0.5
   reproductiveEnergyUse: 0.2
   foragingEnergyThreshold: 0.8
+  reproductionCooldown: 15
