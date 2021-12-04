@@ -28,7 +28,7 @@ When the simulation detects no feeding happening, then it will pause. The passiv
 
 = LIFESPAN =
 
-The player is able to set the amount of time each organism spends in its life phases, all measured in seconds.
+The player is able to set the amount of time each organism spends in its life phases, all measured in seconds (float).
 
 - Juvenile Phase
 - Mature Phase
@@ -56,11 +56,11 @@ See above.
 
 = ENERGY PER SECOND =
 
-A passive energy drain per second.
+A passive energy drain per second. If the animal reaches 0 energy, it will die of starvation.
 
 = FORAGING THRESHOLD =
 
-If the animal drops below this amount of energy, they will try to eat food.
+If the animal drops below this amount of energy, they will try to eat food every second until they find some.
 
 = ENERGY VALUE =
 

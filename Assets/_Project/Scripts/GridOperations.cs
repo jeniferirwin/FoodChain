@@ -10,15 +10,29 @@ namespace FoodChain
         [SerializeField] private Vector3Int lRightBounds;
         [SerializeField] private GameObject grassPrefab;
 
-        private Grid grid;
-        private Dictionary<Vector3Int, GameObject> grasses = new Dictionary<Vector3Int, GameObject>();
-        private List<Vector3Int> emptyCells = new List<Vector3Int>();
-        private Transform grassParent;
+        private static Grid grid;
+        private static Dictionary<Vector3Int, GameObject> grasses = new Dictionary<Vector3Int, GameObject>();
+        private static List<Vector3Int> emptyCells = new List<Vector3Int>();
+        private static Transform grassParent;
         
-        private float _testSpawnRateTicker;
+        private static float _testSpawnRateTicker;
+        
+        private static GridOperations _instance;
+        public GridOperations Instance
+        {
+            get { return _instance; }
+            private set
+            {
+                if (_instance == null)
+                {
+                    _instance = this;
+                }
+            }
+        }
         
         private void Awake()
         {
+            Instance = this;
             grid = GetComponent<Grid>();
             grassParent = new GameObject("GrassParent").transform;
             grassParent.position = Vector3.zero;
@@ -55,23 +69,23 @@ namespace FoodChain
             return true;
         }
 
-        public Vector3Int GetRandomEmptyCell()
+        public static Vector3Int GetRandomEmptyCell()
         {
             var idx = Random.Range(0, emptyCells.Count);
             return emptyCells[idx];
         }
 
-        public bool IsCellOccupied(Vector3Int cell)
+        public static bool IsCellOccupied(Vector3Int cell)
         {
             return grasses.ContainsKey(cell);
         }
 
-        public Vector3Int CellFromWorldPos(Vector3 worldPos)
+        public static Vector3Int CellFromWorldPos(Vector3 worldPos)
         {
             return grid.WorldToCell(worldPos);
         }
 
-        public bool ClearCell(Vector3Int cell)
+        public static bool ClearCell(Vector3Int cell)
         {
             if (!IsCellOccupied(cell)) return false;
             else
@@ -98,7 +112,6 @@ namespace FoodChain
         private GameObject MakeNewGrass(Vector3Int cell)
         {
             var worldPosition = grid.CellToWorld(cell);
-            // TODO: Add Grass component here
             return GameObject.Instantiate(grassPrefab, worldPosition, Quaternion.identity, grassParent);
         }
 
