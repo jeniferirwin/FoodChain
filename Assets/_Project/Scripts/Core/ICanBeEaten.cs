@@ -4,6 +4,7 @@ namespace FoodChain.Core
 {
     public interface ICanBeEaten
     {
+        public int CurrentLifePhase { get; }
         public float EnergyPercentValue { get; }
         public bool IsBeingEaten { get; }
         public void StartBeingEaten();

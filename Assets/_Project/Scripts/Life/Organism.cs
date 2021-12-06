@@ -19,6 +19,8 @@ namespace FoodChain.Life
         private MeshRenderer _rend;
 
         // ENCAPSULATION
+        
+        public int CurrentLifePhase { get { return _currentPhase; } }
 
         public float ReproductionCooldown
         {
@@ -46,6 +48,7 @@ namespace FoodChain.Life
             transform.localScale = ageScales[_currentPhase];
             IsBeingEaten = false;
             _rend = GetComponent<MeshRenderer>();
+            OrganismDatabase.AddMember(gameObject);
         }
 
         protected virtual void Update()
@@ -63,7 +66,12 @@ namespace FoodChain.Life
         public virtual void StartBeingEaten() => IsBeingEaten = true;
         public virtual void FinishBeingEaten() => Die();
 
-        protected virtual void Die() => Destroy(gameObject);
+        protected virtual void Die()
+        {
+            Debug.Log($"{gameObject} is dying.");
+            OrganismDatabase.RemoveMember(gameObject);
+            Destroy(gameObject);
+        }
 
         protected virtual void AgeUp()
         {

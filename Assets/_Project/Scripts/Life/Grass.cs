@@ -7,6 +7,7 @@ namespace FoodChain.Life
     {
         protected override void Die()
         {
+            OrganismDatabase.RemoveMember(gameObject);
             var cell = GridOperations.CellFromWorldPos(transform.position);
             GridOperations.ClearCell(cell);
         }
