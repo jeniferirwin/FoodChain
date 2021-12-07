@@ -16,6 +16,7 @@ namespace FoodChain.Life
         protected Ticker _phaseTicker;
         protected Ticker _reproductionTicker;
         protected bool _isBeingEaten;
+        protected GameObject _aggressor;
         private MeshRenderer _rend;
 
         // ENCAPSULATION
@@ -34,10 +35,16 @@ namespace FoodChain.Life
             set { energyPercentValue = Helpers.MustBePercentage(value); }
         }
         
-        public bool IsBeingEaten
+        public GameObject Aggressor
         {
-            get { return _isBeingEaten; }
-            protected set { _isBeingEaten = value; }
+            get { return _aggressor; }
+            protected set
+            {
+                if (Aggressor == null)
+                {
+                    _aggressor = value;
+                }
+            }
         }
         
 
@@ -46,7 +53,7 @@ namespace FoodChain.Life
             _currentPhase = 0;
             _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
             transform.localScale = ageScales[_currentPhase];
-            IsBeingEaten = false;
+            _aggressor = null;
             _rend = GetComponent<MeshRenderer>();
             OrganismDatabase.AddMember(gameObject);
         }
@@ -63,7 +70,11 @@ namespace FoodChain.Life
             _phaseTicker.Tick();
         }
 
-        public virtual void StartBeingEaten() => IsBeingEaten = true;
+        public virtual void StartBeingEaten(GameObject aggressor)
+        {
+            Aggressor = aggressor;
+        }
+
         public virtual void FinishBeingEaten() => Die();
 
         protected virtual void Die()

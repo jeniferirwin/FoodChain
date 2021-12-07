@@ -82,8 +82,8 @@ Wolves move around and eat deer. Wolves will prefer to eat Elder deer, but if no
 
 If the wolves have started eating juveniles, both animal species are probably very close to going extinct.
 
-==== OOP PILLARS INFORMATION ====
 
+==== OOP PILLARS INFORMATION ====
 === ENCAPSULATION ===
 
 This pillar will be found in the form of the various stats on each organism. None of the stats can be negative. Organisms will be unaware of most of the stats on other organisms. At the time of this writing, I can only think of three stats that they actually need to be aware of: Life stage, position and energy value of their target.

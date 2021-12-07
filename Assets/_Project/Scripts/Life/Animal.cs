@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using FoodChain.Core;
 
@@ -7,13 +8,13 @@ namespace FoodChain.Life
     {
         [SerializeField] protected GameObject offspringPrefab;
         [SerializeField] protected string foodSourceTag;
-        [SerializeField] [Range(0, 2)] protected int foodSourcePhasePreference;
+        [SerializeField] [Range(0, 2)] protected int[] foodSourcePhasePreference;
         [SerializeField] [Range(0f, 1f)] protected float energyUsePerSecond;
         [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyMinimum;
         [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyUse;
         [SerializeField] [Range(0f, 1f)] protected float foragingEnergyThreshold;
 
-        protected GameObject _target = null;
+        protected Organism _target = null;
         protected Ticker _energyTicker;
         protected Ticker _forageTicker;
         protected float _currentEnergyLevel;
@@ -27,7 +28,7 @@ namespace FoodChain.Life
             get { return reproductiveEnergyMinimum; }
             protected set { reproductiveEnergyMinimum = Helpers.MustBePercentage(value); }
         }
-        
+
         public float ReproductiveEnergyUse
         {
             get { return reproductiveEnergyUse; }
@@ -39,7 +40,7 @@ namespace FoodChain.Life
             get { return energyUsePerSecond; }
             protected set { energyUsePerSecond = Helpers.MustBePercentage(value); }
         }
-        
+
         public float ForagingEnergyThreshold
         {
             get { return foragingEnergyThreshold; }
@@ -54,7 +55,7 @@ namespace FoodChain.Life
             _forageTicker = new Ticker(1);
             _energyTicker = new Ticker(1);
         }
-        
+
         protected override void RunTickers()
         {
             base.RunTickers();
@@ -100,6 +101,13 @@ namespace FoodChain.Life
             _target = FindClosestFoodSource();
             _forageTicker.Refresh();
             if (_target == null) return;
+            if (_target.Aggressor != null && _target.Aggressor != this.gameObject)
+            {
+                Debug.Log($"Entity {gameObject.name} has stopped foraging. Target already belongs to {_target.Aggressor.gameObject.name}.");
+                _target = null;
+                return;
+            }
+            _target.StartBeingEaten(gameObject);
             _moveSpeed = Vector3.Distance(_target.transform.position, gameObject.transform.position);
         }
 
@@ -108,15 +116,16 @@ namespace FoodChain.Life
             _reproductionTicker.Refresh();
             _currentEnergyLevel -= ReproductiveEnergyUse;
             var pos = transform.position;
-            var xOffset = Random.Range(1f,2f);
-            var zOffset = Random.Range(1f,2f);
+            var xOffset = Random.Range(1f, 2f);
+            var zOffset = Random.Range(1f, 2f);
             var offspringPos = new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
-            GameObject.Instantiate(offspringPrefab,offspringPos,Quaternion.identity);
+            GameObject.Instantiate(offspringPrefab, offspringPos, Quaternion.identity);
         }
 
         protected void OnTriggerStay(Collider other)
         {
-            if (other.gameObject != _target) return;
+            if (_target == null) return;
+            if (other.gameObject != _target.gameObject) return;
             var org = other.gameObject.GetComponent<ICanBeEaten>();
             var energy = org.EnergyPercentValue;
             _currentEnergyLevel += energy;
@@ -124,29 +133,39 @@ namespace FoodChain.Life
             _target = null;
         }
 
-        protected GameObject FindClosestFoodSource()
+        protected Organism FindClosestFoodSource()
         {
-            var sources = GameObject.FindGameObjectsWithTag(foodSourceTag);
-            if (sources.Length == 0) return null;
-            GameObject closest = null;
+            for (int i = 0; i < 3; i++)
+            {
+                var sources = OrganismDatabase.FindAvailableMembersByPhase(foodSourceTag, foodSourcePhasePreference[i]);
+                if (sources.Count > 0)
+                {
+                    var source = FindClosestFoodSourceInList(sources);
+                    Debug.Log($"{this.gameObject.name} wants to eat {source.gameObject.name}...");
+                    return source;
+                }
+            }
+            return null;
+        }
+
+        protected Organism FindClosestFoodSourceInList(List<Organism> sources)
+        {
+            Organism closest = null;
             foreach (var source in sources)
             {
-                ICanBeEaten org;
-                if (!source.TryGetComponent<ICanBeEaten>(out org)) continue;
-                if (org.IsBeingEaten) continue;
-                var distance = Vector3.Distance(transform.position, source.transform.position);
                 if (closest == null)
                 {
                     closest = source;
+                    continue;
                 }
-                else
+                var currentDist = Vector3.Distance(gameObject.transform.position, source.gameObject.transform.position);
+                var closestDist = Vector3.Distance(gameObject.transform.position, closest.gameObject.transform.position);
+                if (currentDist < closestDist)
                 {
-                    if (distance < Vector3.Distance(transform.position, closest.transform.position))
-                    {
-                        closest = source;
-                    }
+                    closest = source;
                 }
             }
+            if (closest == null) return null;
             return closest;
         }
     }

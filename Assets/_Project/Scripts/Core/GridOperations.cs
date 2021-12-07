@@ -112,7 +112,9 @@ namespace FoodChain.Core
         private GameObject MakeNewGrass(Vector3Int cell)
         {
             var worldPosition = grid.CellToWorld(cell);
-            return GameObject.Instantiate(grassPrefab, worldPosition, Quaternion.identity, grassParent);
+            var newGrass = GameObject.Instantiate(grassPrefab, worldPosition, Quaternion.identity, grassParent);
+            newGrass.name = $"Grass [{worldPosition}]";
+            return newGrass;
         }
 
         private void TestGrid()

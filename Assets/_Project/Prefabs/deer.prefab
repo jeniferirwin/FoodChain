@@ -130,7 +130,7 @@ MonoBehaviour:
   mainColorSlot: 1
   offspringPrefab: {fileID: 1000014060781432}
   foodSourceTag: Plant
-  foodSourcePhasePreference: 0
+  foodSourcePhasePreference: 010000000200000000000000
   energyUsePerSecond: 0.02
   reproductiveEnergyMinimum: 0.5
   reproductiveEnergyUse: 0.2

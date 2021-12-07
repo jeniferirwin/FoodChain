@@ -34,9 +34,14 @@ namespace FoodChain.Life
             }
         }
         
-        public static List<Organism> FindMembersByPhase(int phase)
+        public static List<Organism> FindAvailableMembersByPhase(string tag, int phase)
         {
-            return members.FindAll(x => x.CurrentLifePhase == phase);
+            return members.FindAll(x => x.CurrentLifePhase == phase && x.Aggressor == null && x.CompareTag(tag));
+        }
+
+        public static List<Organism> FindAllMembersByPhase(string tag, int phase)
+        {
+            return members.FindAll(x => x.CurrentLifePhase == phase && x.CompareTag(tag));
         }
     }
 }

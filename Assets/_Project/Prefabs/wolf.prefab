@@ -116,7 +116,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   energyPercentValue: 0.3
-  spawnRate: 0
+  reproductionCooldown: 20
   phaseLengths:
   - 30
   - 90
@@ -132,11 +132,11 @@ MonoBehaviour:
   mainColorSlot: 0
   offspringPrefab: {fileID: 1000012426481418}
   foodSourceTag: Herbivore
+  foodSourcePhasePreference: 020000000100000000000000
   energyUsePerSecond: 0.01
   reproductiveEnergyMinimum: 0.8
   reproductiveEnergyUse: 0.4
   foragingEnergyThreshold: 0.5
-  reproductionCooldown: 20
 --- !u!54 &7253173112129948196
 Rigidbody:
   m_ObjectHideFlags: 0
