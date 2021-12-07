@@ -15,7 +15,7 @@ namespace FoodChain.Player
         NorthWest
     }
 
-    public class Panning : MonoBehaviour
+    public class CameraControl : MonoBehaviour
     {
         [SerializeField] private float moveSpeed;
 
