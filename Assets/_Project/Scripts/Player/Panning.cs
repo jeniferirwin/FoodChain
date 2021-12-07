@@ -3,6 +3,18 @@ using UnityEngine.InputSystem;
 
 namespace FoodChain.Player
 {
+    public enum Compass
+    {
+        North,
+        NorthEast,
+        East,
+        SouthEast,
+        South,
+        SouthWest,
+        West,
+        NorthWest
+    }
+
     public class Panning : MonoBehaviour
     {
         [SerializeField] private float moveSpeed;
@@ -23,6 +35,7 @@ namespace FoodChain.Player
                 return;
             }
             var raw = context.ReadValue<Vector2>();
+            // ABSTRACTION
             var tilted = TiltInput(raw.x, raw.y);
             movement = tilted;
         }
@@ -35,24 +48,37 @@ namespace FoodChain.Player
             // boils down to 'whatever direction we're trying to pan
             // in, tilt the input one cardinal direction clockwise.'
             //
-            // For example, to pan north, we actually have the input
-            // go northeast. To move west, we have the input go northwest,
-            // and so on.
-            // 
-            // This is the most hideous thing I've ever written, and I
-            // feel like there MUST be a better way. But it *works*, and
-            // since this isn't a long term project, I'll just... I'll
-            // just let it be.
+            // For example, to pan north, we actually tilt the input value
+            // northeast. To move west, tilt the input northwest, and so on.
             
-            if (x == 0 && y > 0) return new Vector3(y, 0, y).normalized;
-            if (x > 0 && y > 0) return new Vector3(x, 0, 0).normalized;
-            if (x > 0 && y == 0) return new Vector3(x, 0, -x).normalized;
-            if (x > 0 && y < 0) return new Vector3(0, 0, y).normalized;
-            if (x == 0 && y < 0) return new Vector3(y, 0, y).normalized;
-            if (x < 0 && y < 0) return new Vector3(x, 0, 0).normalized;
-            if (x < 0 && y == 0) return new Vector3(x, 0, -x).normalized;
-            if (x < 0 && y > 0) return new Vector3(0, 0, y).normalized;
+            Compass dir = GetInputDirection(x,y);
+
+            if (dir == Compass.North || dir == Compass.South)
+                return new Vector3(y, 0, y).normalized;
+
+            if (dir == Compass.West || dir == Compass.East)
+                return new Vector3(x, 0, -x).normalized;
+
+            if (dir == Compass.NorthEast || dir == Compass.SouthWest)
+                return new Vector3(x, 0, 0).normalized;
+            
+            if (dir == Compass.NorthWest || dir == Compass.SouthEast)
+                return new Vector3(0, 0, y).normalized;
+
             return Vector3.zero;
+        }
+        
+        private Compass GetInputDirection(float x, float y)
+        {
+            if (x == 0 && y > 0) return Compass.North;
+            if (x > 0 && y > 0) return Compass.NorthEast;
+            if (x > 0 && y == 0) return Compass.East;
+            if (x > 0 && y < 0) return Compass.SouthEast;
+            if (x == 0 && y < 0) return Compass.South;
+            if (x < 0 && y < 0) return Compass.SouthWest;
+            if (x < 0 && y == 0) return Compass.West;
+            if (x < 0 && y > 0) return Compass.NorthWest;
+            return Compass.North;
         }
 
         private void Update()
