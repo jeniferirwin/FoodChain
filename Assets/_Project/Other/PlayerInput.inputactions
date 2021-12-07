@@ -12,6 +12,22 @@
                     "expectedControlType": "Vector2",
                     "processors": "NormalizeVector2",
                     "interactions": ""
+                },
+                {
+                    "name": "MouseZoom",
+                    "type": "Value",
+                    "id": "f5aa576c-d635-43d8-8543-5dac37fe8bbf",
+                    "expectedControlType": "Vector2",
+                    "processors": "InvertVector2",
+                    "interactions": ""
+                },
+                {
+                    "name": "KeyZoom",
+                    "type": "Button",
+                    "id": "b1ee8bef-53a8-4149-950c-38c795250f5c",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -67,6 +83,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pan",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "f2025279-eb2a-4933-b692-37fe4799622e",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "NormalizeVector2",
+                    "groups": "",
+                    "action": "MouseZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "UpDown",
+                    "id": "af8a0230-71ac-40ed-b4ab-b41e50e35bb0",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "Normalize(min=-1,max=1)",
+                    "groups": "",
+                    "action": "KeyZoom",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "3664461a-868d-46bd-a303-ae87f1d0caac",
+                    "path": "<Keyboard>/pageDown",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyZoom",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "ab4a4911-6752-4cfd-b9c6-eb0b410b57eb",
+                    "path": "<Keyboard>/pageUp",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "KeyZoom",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }

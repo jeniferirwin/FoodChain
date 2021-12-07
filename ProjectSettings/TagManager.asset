@@ -7,6 +7,7 @@ TagManager:
   - Herbivore
   - Carnivore
   - Plant
+  - VirtualCam
   layers:
   - Default
   - TransparentFX
