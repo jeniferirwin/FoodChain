@@ -43,6 +43,7 @@ namespace FoodChain.UI
         private void UpdateLifePhase(int phase)
         {
             lifeBar.UpdateLifePhase(grass.CurrentLifePhase);
+            Debug.Log($"Grass updated with phase {grass.CurrentLifePhase}");
         }
     }
 }

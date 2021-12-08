@@ -19,9 +19,7 @@ namespace FoodChain.Life
             Organism org;
             if (member.TryGetComponent<Organism>(out org))
             {
-                Debug.Log($"Removing {org.gameObject.name} from database.");
                 RemoveMember(org);
-                Debug.Log(members);
             }
         }
         
