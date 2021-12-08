@@ -1,11 +1,15 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using FoodChain.Core;
 
 namespace FoodChain.Life
 {
-    public class Animal : Organism, ICanFeed
+    public class Animal : Organism, ICanFeed, IHaveAnimalPanel
     {
+        public event Action<PercentPack> OnEnergyChanged = delegate {};
+        public event Action<PercentPack> OnReproductionTimerChanged = delegate {};
+
         [SerializeField] protected GameObject offspringPrefab;
         [SerializeField] protected string foodSourceTag;
         [SerializeField] [Range(0, 2)] protected int[] foodSourcePhasePreference;
@@ -22,6 +26,12 @@ namespace FoodChain.Life
 
         // ENCAPSULATION
         public bool IsFeeding { get; protected set; }
+        
+        public PercentPack EnergyPercent
+        { get { return new PercentPack(_currentEnergyLevel, 1); } }
+        
+        public PercentPack ReproductionPercent
+        { get { return new PercentPack(_reproductionTicker.Remaining, _reproductionTicker.Maximum); } }
 
         public float ReproductiveEnergyMinimum
         {
@@ -55,12 +65,20 @@ namespace FoodChain.Life
             _forageTicker = new Ticker(1);
             _energyTicker = new Ticker(1);
         }
+        
+        protected override void AgeUp()
+        {
+            base.AgeUp();
+            _reproductionTicker = new Ticker(ReproductionCooldown);
+            OnReproductionTimerChanged?.Invoke(ReproductionPercent);
+        }
 
         protected override void RunTickers()
         {
             base.RunTickers();
             _energyTicker.Tick();
             if (_currentPhase == 1) _reproductionTicker.Tick();
+            OnReproductionTimerChanged?.Invoke(ReproductionPercent);
             if (_currentEnergyLevel < ForagingEnergyThreshold) _forageTicker.Tick();
         }
 
@@ -92,6 +110,7 @@ namespace FoodChain.Life
         {
             _currentEnergyLevel -= EnergyUsePerSecond;
             _energyTicker.Refresh();
+            OnEnergyChanged?.Invoke(EnergyPercent);
             if (_currentEnergyLevel <= 0f)
                 Die();
         }
@@ -103,7 +122,6 @@ namespace FoodChain.Life
             if (_target == null) return;
             if (_target.Aggressor != null && _target.Aggressor != this.gameObject)
             {
-                Debug.Log($"Entity {gameObject.name} has stopped foraging. Target already belongs to {_target.Aggressor.gameObject.name}.");
                 _target = null;
                 return;
             }
@@ -115,9 +133,11 @@ namespace FoodChain.Life
         {
             _reproductionTicker.Refresh();
             _currentEnergyLevel -= ReproductiveEnergyUse;
+            OnEnergyChanged?.Invoke(EnergyPercent);
+            OnReproductionTimerChanged.Invoke(ReproductionPercent);
             var pos = transform.position;
-            var xOffset = Random.Range(1f, 2f);
-            var zOffset = Random.Range(1f, 2f);
+            var xOffset = UnityEngine.Random.Range(1f, 2f);
+            var zOffset = UnityEngine.Random.Range(1f, 2f);
             var offspringPos = new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
             GameObject.Instantiate(offspringPrefab, offspringPos, Quaternion.identity);
         }
@@ -129,6 +149,7 @@ namespace FoodChain.Life
             var org = other.gameObject.GetComponent<ICanBeEaten>();
             var energy = org.EnergyPercentValue;
             _currentEnergyLevel += energy;
+            OnEnergyChanged?.Invoke(EnergyPercent);
             org.FinishBeingEaten();
             _target = null;
         }
@@ -139,11 +160,7 @@ namespace FoodChain.Life
             {
                 var sources = OrganismDatabase.FindAvailableMembersByPhase(foodSourceTag, foodSourcePhasePreference[i]);
                 if (sources.Count > 0)
-                {
-                    var source = FindClosestFoodSourceInList(sources);
-                    Debug.Log($"{this.gameObject.name} wants to eat {source.gameObject.name}...");
-                    return source;
-                }
+                    return FindClosestFoodSourceInList(sources);
             }
             return null;
         }

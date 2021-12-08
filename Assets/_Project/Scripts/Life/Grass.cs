@@ -3,7 +3,7 @@ using FoodChain.Core;
 
 namespace FoodChain.Life
 {
-    public class Grass : Organism
+    public class Grass : Organism, IHaveGrassPanel
     {
         protected override void Die()
         {

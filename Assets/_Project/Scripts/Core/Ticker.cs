@@ -10,6 +10,7 @@ namespace FoodChain.Core
 
         public bool IsFinished { get { return _finished; } }
         public float Maximum { get { return _maximum; } set { _maximum = value; } }
+        public float Remaining { get { return _remaining; } }
 
         public Ticker(float value)
         {
