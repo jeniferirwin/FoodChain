@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d366fcb4beeafd545863a8f9dd753aaa, type: 3}
+  m_Name: WolfAnimalTemplate
+  m_EditorClassIdentifier: 
+  offspringPrefab: {fileID: 1000012426481418, guid: e175bc8ae8be6b7488f7ad08fa9fb069, type: 3}
+  reproductionCooldown: 25
+  foodSourceTag: Herbivore
+  foodSourcePhasePreference: 020000000100000000000000
+  energyCostPerSecond: 0.01
+  reproductiveEnergyMinimum: 0.55
+  reproductiveEnergyCost: 0.4
+  hungerEnergyThreshold: 0.6

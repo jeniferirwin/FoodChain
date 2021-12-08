@@ -7,158 +7,111 @@ namespace FoodChain.Life
 {
     public class Animal : Organism, ICanFeed, IHaveAnimalPanel
     {
-        public event Action<PercentPack> OnEnergyChanged = delegate {};
-        public event Action<PercentPack> OnReproductionTimerChanged = delegate {};
+        public event Action<PercentPack> OnEnergyUpdated = delegate {};
+        public event Action<PercentPack> OnReproductionCooldownUpdated = delegate {};
 
-        [SerializeField] protected GameObject offspringPrefab;
-        [SerializeField] protected string foodSourceTag;
-        [SerializeField] [Range(0, 2)] protected int[] foodSourcePhasePreference;
-        [SerializeField] [Range(0f, 1f)] protected float energyUsePerSecond;
-        [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyMinimum;
-        [SerializeField] [Range(0f, 1f)] protected float reproductiveEnergyUse;
-        [SerializeField] [Range(0f, 1f)] protected float foragingEnergyThreshold;
+        [SerializeField] protected AnimalTemplate animalTemplate;
 
-        protected Organism _target = null;
-        protected Ticker _energyTicker;
-        protected Ticker _forageTicker;
-        protected float _currentEnergyLevel;
+        public ForagerData Foraging { get { return _forageData; } }
+        public ReproductiveData Reproduction { get { return _repData; } }
+        protected ForagerData _forageData;
+        protected ReproductiveData _repData;
         protected float _moveSpeed;
 
-        // ENCAPSULATION
-        public bool IsFeeding { get; protected set; }
-        
-        public PercentPack EnergyPercent
-        { get { return new PercentPack(_currentEnergyLevel, 1); } }
-        
-        public PercentPack ReproductionPercent
-        { get { return new PercentPack(_reproductionTicker.Remaining, _reproductionTicker.Maximum); } }
+        public GameObject TargetObject { get { return Target.gameObject; } }
 
-        public float ReproductiveEnergyMinimum
-        {
-            get { return reproductiveEnergyMinimum; }
-            protected set { reproductiveEnergyMinimum = Helpers.MustBePercentage(value); }
-        }
-
-        public float ReproductiveEnergyUse
-        {
-            get { return reproductiveEnergyUse; }
-            protected set { reproductiveEnergyUse = Helpers.MustBePercentage(value); }
-        }
-
-        public float EnergyUsePerSecond
-        {
-            get { return energyUsePerSecond; }
-            protected set { energyUsePerSecond = Helpers.MustBePercentage(value); }
-        }
-
-        public float ForagingEnergyThreshold
-        {
-            get { return foragingEnergyThreshold; }
-            protected set { foragingEnergyThreshold = Helpers.MustBePercentage(value); }
+        public Organism Target
+        { 
+            get { return Foraging.Target; }
+            set { Foraging.Target = value; }
         }
 
         protected override void Awake()
         {
-            _currentEnergyLevel = 1;
             base.Awake();
-            _reproductionTicker = new Ticker(ReproductionCooldown);
-            _forageTicker = new Ticker(1);
-            _energyTicker = new Ticker(1);
+            AnimalTemplate _tmp = animalTemplate;
+            _forageData = new ForagerData(_tmp.energyCostPerSecond, _tmp.hungerEnergyThreshold, _tmp.foodSourceTag, _tmp.foodSourcePhasePreference);
+            _repData = new ReproductiveData(_tmp.offspringPrefab, _tmp.reproductionCooldown, _tmp.reproductiveEnergyMinimum, _tmp.reproductiveEnergyCost);
+            Foraging.OnEnergyChanged += EnergyChanged;
+            Reproduction.OnCooldownUpdate += ReproductionCooldownUpdated;
+            Foraging.Starved += Die;
         }
         
-        protected override void AgeUp()
+        protected override void Update()
         {
-            base.AgeUp();
-            _reproductionTicker = new Ticker(ReproductionCooldown);
-            OnReproductionTimerChanged?.Invoke(ReproductionPercent);
+            RunTickers();
+            if (Foraging.IsHungry)
+            {
+                Forage();
+                return;
+            }
+            if (Reproduction.CanSpawn && Foraging.CurrentEnergy > Reproduction.SpawnEnergyMinimum)
+            {
+                Reproduce();
+            }
         }
-
+        
         protected override void RunTickers()
         {
             base.RunTickers();
-            _energyTicker.Tick();
-            if (_currentPhase == 1) _reproductionTicker.Tick();
-            OnReproductionTimerChanged?.Invoke(ReproductionPercent);
-            if (_currentEnergyLevel < ForagingEnergyThreshold) _forageTicker.Tick();
+            Foraging.Tick();
+            if (Age.CanBreed) Reproduction.Tick();
         }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            if (_energyTicker.IsFinished)
-                UseEnergy();
-
-            if (_reproductionTicker.IsFinished && _currentEnergyLevel > ReproductiveEnergyMinimum)
-                Reproduce();
-
-            if (_currentEnergyLevel < ForagingEnergyThreshold && _forageTicker.IsFinished)
-                Forage();
-        }
-
+        
         protected void FixedUpdate()
         {
-            if (_target != null)
+            if (Target != null)
             {
-                transform.LookAt(_target.transform);
-                var direction = (_target.transform.position - transform.position).normalized;
+                transform.LookAt(Target.transform);
+                var direction = (Target.transform.position - transform.position).normalized;
                 transform.Translate(direction * _moveSpeed * Time.fixedDeltaTime, Space.World);
             }
         }
 
-        protected void UseEnergy()
-        {
-            _currentEnergyLevel -= EnergyUsePerSecond;
-            _energyTicker.Refresh();
-            OnEnergyChanged?.Invoke(EnergyPercent);
-            if (_currentEnergyLevel <= 0f)
-                Die();
-        }
-
         protected void Forage()
         {
-            _target = FindClosestFoodSource();
-            _forageTicker.Refresh();
-            if (_target == null) return;
-            if (_target.Aggressor != null && _target.Aggressor != this.gameObject)
+            Target = FindClosestFoodSource();
+            Foraging.Refresh();
+            if (Target == null) return;
+            if (Target.Aggressor != null && Target.Aggressor != this.gameObject)
             {
-                _target = null;
+                Target = null;
                 return;
             }
-            _target.StartBeingEaten(gameObject);
-            _moveSpeed = Vector3.Distance(_target.transform.position, gameObject.transform.position);
+            Target.Aggressor = gameObject;
+            _moveSpeed = Vector3.Distance(Target.transform.position, gameObject.transform.position);
         }
 
         protected void Reproduce()
         {
-            _reproductionTicker.Refresh();
-            _currentEnergyLevel -= ReproductiveEnergyUse;
-            OnEnergyChanged?.Invoke(EnergyPercent);
-            OnReproductionTimerChanged.Invoke(ReproductionPercent);
             var pos = transform.position;
             var xOffset = UnityEngine.Random.Range(1f, 2f);
             var zOffset = UnityEngine.Random.Range(1f, 2f);
             var offspringPos = new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
-            GameObject.Instantiate(offspringPrefab, offspringPos, Quaternion.identity);
+            GameObject.Instantiate(Reproduction.OffspringPrefab, offspringPos, Quaternion.identity);
+            Foraging.SubtractEnergy(Reproduction.SpawnEnergyCost);
+            Reproduction.Refresh();
         }
+        
+        public void EnergyChanged(PercentPack pack) => OnEnergyUpdated(pack);
+        public void ReproductionCooldownUpdated(PercentPack pack) => OnReproductionCooldownUpdated(pack);
 
         protected void OnTriggerStay(Collider other)
         {
-            if (_target == null) return;
-            if (other.gameObject != _target.gameObject) return;
+            if (Target == null) return;
+            if (other.gameObject != Target.gameObject) return;
             var org = other.gameObject.GetComponent<ICanBeEaten>();
             var energy = org.EnergyPercentValue;
-            _currentEnergyLevel += energy;
-            OnEnergyChanged?.Invoke(EnergyPercent);
-            org.FinishBeingEaten();
-            _target = null;
+            Foraging.AddEnergy(energy);
+            org.Die();
+            Target = null;
         }
 
         protected Organism FindClosestFoodSource()
         {
             for (int i = 0; i < 3; i++)
             {
-                var sources = OrganismDatabase.FindAvailableMembersByPhase(foodSourceTag, foodSourcePhasePreference[i]);
+                var sources = OrganismDatabase.FindAvailableMembersByPhase(Foraging.PreyTag, Foraging.PhasePreference[i]);
                 if (sources.Count > 0)
                     return FindClosestFoodSourceInList(sources);
             }

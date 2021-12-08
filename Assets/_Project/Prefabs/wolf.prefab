@@ -113,31 +113,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 1000012426481418}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 917f336a2d15cd14eada2ddeb348f652, type: 3}
+  m_Script: {fileID: 11500000, guid: 59778fb1e955ef14aae5ca4ab9040dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energyPercentValue: 0.3
-  reproductionCooldown: 20
-  phaseLengths:
-  - 30
-  - 90
-  - 40
-  ageScales:
-  - {x: 0.4, y: 0.4, z: 0.4}
-  - {x: 1, y: 1, z: 1}
-  - {x: 0.8, y: 0.8, z: 0.8}
-  ageMaterials:
-  - {fileID: 2100000, guid: 31b29cea830e0e24da72018652e5ed31, type: 2}
-  - {fileID: 2100000, guid: 40a353f6117398145a3e785d9854de93, type: 2}
-  - {fileID: 2100000, guid: c48ed0c67054fc24da0ac1cced5a308c, type: 2}
-  mainColorSlot: 0
-  offspringPrefab: {fileID: 1000012426481418}
-  foodSourceTag: Herbivore
-  foodSourcePhasePreference: 020000000100000000000000
-  energyUsePerSecond: 0.01
-  reproductiveEnergyMinimum: 0.8
-  reproductiveEnergyUse: 0.4
-  foragingEnergyThreshold: 0.5
+  organismTemplate: {fileID: 11400000, guid: 9e5f5ee012dc29d43a3c063cb9682533, type: 2}
+  animalTemplate: {fileID: 11400000, guid: 2ad3bad69073c53408f8fa1bad305344, type: 2}
 --- !u!54 &7253173112129948196
 Rigidbody:
   m_ObjectHideFlags: 0

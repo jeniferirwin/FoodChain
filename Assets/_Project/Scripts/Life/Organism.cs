@@ -8,116 +8,88 @@ namespace FoodChain.Life
     {
         public event Action<PercentPack> OnAgeTicked = delegate { };
         public event Action<int> OnAgeUp = delegate { };
-        [SerializeField] [Range(0f, 1f)] protected float energyPercentValue;
-        [SerializeField] protected float reproductionCooldown;
-        [SerializeField] protected float[] phaseLengths = new float[3];
-        [SerializeField] private Vector3[] ageScales = new Vector3[3];
-        [SerializeField] private Material[] ageMaterials = new Material[3];
-        [SerializeField] private int mainColorSlot;
 
-        protected int _currentPhase;
-        protected Ticker _phaseTicker;
-        protected Ticker _reproductionTicker;
-        protected GameObject _aggressor;
-        private MeshRenderer _rend;
+        [SerializeField] protected OrganismTemplate organismTemplate;
 
         // ENCAPSULATION
+        // This thing has LAYERS
+        public AgeData Age { get { return _ageData; } }
+        public OrganismData Data { get { return _orgData; } }
+        public float EnergyPercentValue { get { return Data.EnergyPercentValue; } }
+        public int CurrentLifePhase { get { return Age.CurrentPhase; } }
+        public PercentPack LifePhasePercent { get { return Age.PhasePercent; }}
         
-        public int CurrentLifePhase { get { return _currentPhase; } }
-        
-        public PercentPack LifePhasePercent
-        {
-            get
-            {
-                return new PercentPack(_phaseTicker.Remaining, _phaseTicker.Maximum);
-            }
-        }
 
-        public float ReproductionCooldown
-        {
-            get { return reproductionCooldown; }
-            set { reproductionCooldown = Helpers.MustBePositive(value); }
-        }
-        
-        public float EnergyPercentValue
-        {
-            get { return energyPercentValue; }
-            set { energyPercentValue = Helpers.MustBePercentage(value); }
-        }
-        
         public GameObject Aggressor
         {
             get { return _aggressor; }
-            protected set
-            {
-                if (Aggressor == null)
-                {
-                    _aggressor = value;
-                }
-            }
+            set { if (Aggressor == null) _aggressor = value; }
         }
+
+        protected AgeData _ageData;
+        protected OrganismData _orgData;
+        protected GameObject _aggressor;
+        private MeshRenderer _rend;
         
         protected virtual void Awake()
         {
-            _currentPhase = 0;
-            _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
-            OnAgeTicked?.Invoke(LifePhasePercent);
-            OnAgeUp?.Invoke(CurrentLifePhase);
-            transform.localScale = ageScales[_currentPhase];
-            _aggressor = null;
+            // ABSTRACTION
+            // SO MUCH ABSTRACTION
+            OrganismTemplate _tmp = organismTemplate;
+            _ageData = new AgeData(_tmp.phaseLengths, _tmp.phaseScales, _tmp.phaseMaterials);
+            _orgData = new OrganismData(_tmp.energyPercentValue, _tmp.mainColorSlot);
+            Aggressor = null;
             _rend = GetComponent<MeshRenderer>();
+            SubscribeEvents();
+            UpdateAppearance();
             OrganismDatabase.AddMember(gameObject);
         }
+        
+        protected virtual void Update() => RunTickers();
 
-        protected virtual void Update()
+        protected virtual void RunTickers() => Age.Tick();
+
+        protected void UpdateAppearance()
         {
-            RunTickers();
-            CheckAging();
+            if (Age.CurrentPhase >= 3) return;
+            transform.localScale = Age.CurrentPhaseScale;
+            var newMaterials = _rend.materials;
+            newMaterials[Data.MainColorSlot] = Age.CurrentPhaseMaterial;
+            _rend.materials = newMaterials;
         }
 
-        // ABSTRACTION
-        protected virtual void RunTickers()
+        protected virtual void SubscribeEvents()
         {
-            _phaseTicker.Tick();
-            OnAgeTicked?.Invoke(LifePhasePercent);
+            Age.OnAgeUp += AgeUp;
+            Age.OnAgeTicked += AgeTicked;
         }
-
-        public virtual void StartBeingEaten(GameObject aggressor)
+        
+        protected virtual void AgeUp(int newPhase)
         {
-            Aggressor = aggressor;
-        }
-
-        public virtual void FinishBeingEaten() => Die();
-
-        protected virtual void Die()
-        {
-            OrganismDatabase.RemoveMember(gameObject);
-            Destroy(gameObject);
-        }
-
-        protected virtual void AgeUp()
-        {
-            if (_currentPhase < 2)
+            if (newPhase == 3)
             {
-                _currentPhase++;
-                _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
-                transform.localScale = ageScales[_currentPhase];
-                _rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
-                OnAgeUp?.Invoke(CurrentLifePhase);
-            }
-            else
-            {
+                Cleanup();
                 Die();
-            }
-        }
-
-        protected virtual void CheckAging()
-        {
-            if (_phaseTicker.IsFinished)
-            {
-                AgeUp();
                 return;
             }
+            UpdateAppearance();
+            OnAgeUp(newPhase);
+        }
+
+        protected virtual void AgeTicked(PercentPack pack) => OnAgeTicked(pack);
+        
+        protected virtual void Cleanup()
+        {
+            Age.Cleanup();
+            OnAgeTicked = null;
+            OnAgeUp = null;
+        }
+        
+        public virtual void Die()
+        {
+            Cleanup();
+            OrganismDatabase.RemoveMember(gameObject);
+            Destroy(gameObject);
         }
     }
 }

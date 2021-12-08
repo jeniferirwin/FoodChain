@@ -4,6 +4,6 @@ namespace FoodChain.Core
 {
     public interface ICanFeed
     {
-        public bool IsFeeding { get; }
+        public GameObject TargetObject { get; }
     }
 }

@@ -6,8 +6,7 @@ namespace FoodChain.Core
     {
         public int CurrentLifePhase { get; }
         public float EnergyPercentValue { get; }
-        public GameObject Aggressor { get; }
-        public void StartBeingEaten(GameObject aggressor);
-        public void FinishBeingEaten();
+        public GameObject Aggressor { get; set; }
+        public void Die();
     }
 }
