@@ -5,7 +5,7 @@ namespace FoodChain.Life
 {
     public class Grass : Organism, IHaveGrassPanel
     {
-        protected override void Die()
+        public override void Die()
         {
             OrganismDatabase.RemoveMember(gameObject);
             var cell = GridOperations.CellFromWorldPos(transform.position);

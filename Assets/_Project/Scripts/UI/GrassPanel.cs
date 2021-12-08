@@ -9,13 +9,11 @@ namespace FoodChain.UI
         
         private IHaveGrassPanel grass;
 
-        private void OnEnable()
+        private void Start()
         {
             grass = transform.GetComponentInParent<IHaveGrassPanel>();
-            if (grass != null)
-            {
-                SubscribeEvents();
-            }
+            if (grass != null) SubscribeEvents();
+            UpdateLifePhase(grass.CurrentLifePhase);
         }
         
         private void SubscribeEvents()
@@ -24,17 +22,6 @@ namespace FoodChain.UI
             grass.OnAgeUp += UpdateLifePhase;
         }
         
-        private void UnsubscribeEvents()
-        {
-            grass.OnAgeTicked -= UpdateLife;
-            grass.OnAgeUp -= UpdateLifePhase;
-        }
-        
-        private void OnDisable()
-        {
-            UnsubscribeEvents();
-        }
-
         public void UpdateLife(PercentPack life)
         {
             lifeBar.UpdateFill(life.current, life.max);
@@ -43,7 +30,6 @@ namespace FoodChain.UI
         private void UpdateLifePhase(int phase)
         {
             lifeBar.UpdateLifePhase(grass.CurrentLifePhase);
-            Debug.Log($"Grass updated with phase {grass.CurrentLifePhase}");
         }
     }
 }

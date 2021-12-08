@@ -12,7 +12,7 @@ namespace FoodChain.UI
 
         private IHaveAnimalPanel animal;
 
-        private void OnEnable()
+        private void Start()
         {
             animal = transform.GetComponentInParent<IHaveAnimalPanel>();
             if (animal == null)
@@ -22,29 +22,17 @@ namespace FoodChain.UI
             }
 
             SubscribeEvents();
+            UpdateLifePhase(animal.CurrentLifePhase);
         }
         
         private void SubscribeEvents()
         {
             animal.OnAgeTicked += UpdateLife;
             animal.OnAgeUp += UpdateLifePhase;
-            animal.OnReproductionTimerChanged += UpdateSpawn;
-            animal.OnEnergyChanged += UpdateEnergy;
+            animal.OnReproductionCooldownUpdated += UpdateSpawn;
+            animal.OnEnergyUpdated += UpdateEnergy;
         }
 
-        private void UnsubscribeEvents()
-        {
-            animal.OnAgeTicked -= UpdateLife;
-            animal.OnAgeUp -= UpdateLifePhase;
-            animal.OnReproductionTimerChanged -= UpdateSpawn;
-            animal.OnEnergyChanged -= UpdateEnergy;
-        }
-
-        private void OnDisable()
-        {
-            UnsubscribeEvents();
-        }
-        
         private void UpdateLifePhase(int phase)
         {
             lifeBar.UpdateLifePhase(animal.CurrentLifePhase);
