@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using FoodChain.Core;
 
@@ -5,6 +6,8 @@ namespace FoodChain.Life
 {
     public abstract class Organism : MonoBehaviour, ICanBeEaten
     {
+        public event Action<PercentPack> OnAgeTicked = delegate { };
+        public event Action<int> OnAgeUp = delegate { };
         [SerializeField] [Range(0f, 1f)] protected float energyPercentValue;
         [SerializeField] protected float reproductionCooldown;
         [SerializeField] protected float[] phaseLengths = new float[3];
@@ -15,13 +18,20 @@ namespace FoodChain.Life
         protected int _currentPhase;
         protected Ticker _phaseTicker;
         protected Ticker _reproductionTicker;
-        protected bool _isBeingEaten;
         protected GameObject _aggressor;
         private MeshRenderer _rend;
 
         // ENCAPSULATION
         
         public int CurrentLifePhase { get { return _currentPhase; } }
+        
+        public PercentPack LifePhasePercent
+        {
+            get
+            {
+                return new PercentPack(_phaseTicker.Remaining, _phaseTicker.Maximum);
+            }
+        }
 
         public float ReproductionCooldown
         {
@@ -47,11 +57,12 @@ namespace FoodChain.Life
             }
         }
         
-
         protected virtual void Awake()
         {
             _currentPhase = 0;
             _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
+            OnAgeTicked?.Invoke(LifePhasePercent);
+            OnAgeUp?.Invoke(CurrentLifePhase);
             transform.localScale = ageScales[_currentPhase];
             _aggressor = null;
             _rend = GetComponent<MeshRenderer>();
@@ -68,6 +79,7 @@ namespace FoodChain.Life
         protected virtual void RunTickers()
         {
             _phaseTicker.Tick();
+            OnAgeTicked?.Invoke(LifePhasePercent);
         }
 
         public virtual void StartBeingEaten(GameObject aggressor)
@@ -79,7 +91,6 @@ namespace FoodChain.Life
 
         protected virtual void Die()
         {
-            Debug.Log($"{gameObject} is dying.");
             OrganismDatabase.RemoveMember(gameObject);
             Destroy(gameObject);
         }
@@ -92,6 +103,7 @@ namespace FoodChain.Life
                 _phaseTicker = new Ticker(phaseLengths[_currentPhase]);
                 transform.localScale = ageScales[_currentPhase];
                 _rend.materials[mainColorSlot] = ageMaterials[_currentPhase];
+                OnAgeUp?.Invoke(CurrentLifePhase);
             }
             else
             {
