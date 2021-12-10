@@ -22,8 +22,7 @@ MonoBehaviour:
   - {x: 1.1, y: 1.1, z: 1.1}
   - {x: 1, y: 1, z: 1}
   phaseMaterials:
-  - {fileID: 2100000, guid: 579080bda9f89ee42a5447d6d997e266, type: 2}
-  - {fileID: 2100000, guid: 64a4684ba67ced04c811f6174e678a22, type: 2}
-  - {fileID: 2100000, guid: c48ed0c67054fc24da0ac1cced5a308c, type: 2}
-  mainColorSlot: 1
-  currentPhase: 0
+  - {fileID: 2100000, guid: d223cb0f58beeaa43a3075dbc9fe0c63, type: 2}
+  - {fileID: 2100000, guid: eb802bbd95dae2142a26cee28c3e32d4, type: 2}
+  - {fileID: 2100000, guid: bc8230c203d4b8a4faa9211a5ab4bd30, type: 2}
+  mainColorSlot: 0

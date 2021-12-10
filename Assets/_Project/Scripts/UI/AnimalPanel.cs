@@ -9,12 +9,15 @@ namespace FoodChain.UI
         [SerializeField] private FillBar energyBar;
         [SerializeField] private FillBar spawnBar;
         [SerializeField] private FillBar lifeBar;
+        [SerializeField] private static ScriptableObject panelControlSO;
 
         private IHaveAnimalPanel animal;
+        private IPanelControl<AnimalPanel> panelControl;
 
         private void Start()
         {
             animal = transform.GetComponentInParent<IHaveAnimalPanel>();
+            panelControl = panelControlSO as IPanelControl<AnimalPanel>;
             if (animal == null)
             {
                 this.enabled = false;
