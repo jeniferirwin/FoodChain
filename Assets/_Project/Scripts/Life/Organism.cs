@@ -10,6 +10,7 @@ namespace FoodChain.Life
         public event Action<int> OnAgeUp = delegate { };
 
         [SerializeField] protected OrganismTemplate organismTemplate;
+        [SerializeField] protected GameObject infoPanel;
 
         // ENCAPSULATION
         // This thing has LAYERS
@@ -39,10 +40,15 @@ namespace FoodChain.Life
             _ageData = new AgeData(_tmp.phaseLengths, _tmp.phaseScales, _tmp.phaseMaterials);
             _orgData = new OrganismData(_tmp.energyPercentValue, _tmp.mainColorSlot);
             Aggressor = null;
-            _rend = GetComponent<MeshRenderer>();
+            _rend = GetComponentInChildren<MeshRenderer>();
             SubscribeEvents();
             UpdateAppearance();
             OrganismDatabase.AddMember(gameObject);
+        }
+        
+        protected virtual void Start()
+        {
+            infoPanel.SetActive(GetInfoPanelVisibility());
         }
         
         protected virtual void Update() => RunTickers();
@@ -90,6 +96,35 @@ namespace FoodChain.Life
             Cleanup();
             OrganismDatabase.RemoveMember(gameObject);
             Destroy(gameObject);
+        }
+        
+        public virtual void ShowPanel(bool value)
+        {
+            SetInfoPanelVisibility(value);
+            if (value)
+                infoPanel.SetActive(true);
+            else
+                infoPanel.SetActive(false);
+        }
+        
+        private bool GetInfoPanelVisibility()
+        {
+            if (gameObject.CompareTag("Plant"))
+                return GameManager.PlantPanelsShowing;
+            else if (gameObject.CompareTag("Herbivore"))
+                return GameManager.HerbivorePanelsShowing;
+            else
+                return GameManager.CarnivorePanelsShowing;
+        }
+
+        private void SetInfoPanelVisibility(bool value)
+        {
+            if (gameObject.CompareTag("Plant"))
+                GameManager.PlantPanelsShowing = value;
+            else if (gameObject.CompareTag("Herbivore"))
+                GameManager.HerbivorePanelsShowing = value;
+            else
+                GameManager.CarnivorePanelsShowing = value;
         }
     }
 }
