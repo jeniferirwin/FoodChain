@@ -18,8 +18,8 @@ namespace FoodChain.Life
         public OrganismData Data { get { return _orgData; } }
         public float EnergyPercentValue { get { return Data.EnergyPercentValue; } }
         public int CurrentLifePhase { get { return Age.CurrentPhase; } }
-        public PercentPack LifePhasePercent { get { return Age.PhasePercent; }}
-        
+        public PercentPack LifePhasePercent { get { return Age.PhasePercent; } }
+
 
         public GameObject Aggressor
         {
@@ -31,7 +31,29 @@ namespace FoodChain.Life
         protected OrganismData _orgData;
         protected GameObject _aggressor;
         private MeshRenderer _rend;
-        
+
+        private bool InfoPanelVisibility
+        {
+            get
+            {
+                if (gameObject.CompareTag("Plant"))
+                    return GameManager.PlantPanelsShowing;
+                else if (gameObject.CompareTag("Herbivore"))
+                    return GameManager.HerbivorePanelsShowing;
+                else
+                    return GameManager.CarnivorePanelsShowing;
+            }
+            set
+            {
+                if (gameObject.CompareTag("Plant"))
+                    GameManager.PlantPanelsShowing = value;
+                else if (gameObject.CompareTag("Herbivore"))
+                    GameManager.HerbivorePanelsShowing = value;
+                else
+                    GameManager.CarnivorePanelsShowing = value;
+            }
+        }
+
         protected virtual void Awake()
         {
             // ABSTRACTION
@@ -45,12 +67,12 @@ namespace FoodChain.Life
             UpdateAppearance();
             OrganismDatabase.AddMember(gameObject);
         }
-        
+
         protected virtual void Start()
         {
-            infoPanel.SetActive(GetInfoPanelVisibility());
+            infoPanel.SetActive(InfoPanelVisibility);
         }
-        
+
         protected virtual void Update() => RunTickers();
 
         protected virtual void RunTickers() => Age.Tick();
@@ -69,7 +91,7 @@ namespace FoodChain.Life
             Age.OnAgeUp += AgeUp;
             Age.OnAgeTicked += AgeTicked;
         }
-        
+
         protected virtual void AgeUp(int newPhase)
         {
             if (newPhase == 3)
@@ -83,48 +105,28 @@ namespace FoodChain.Life
         }
 
         protected virtual void AgeTicked(PercentPack pack) => OnAgeTicked(pack);
-        
+
         protected virtual void Cleanup()
         {
             Age.Cleanup();
             OnAgeTicked = null;
             OnAgeUp = null;
         }
-        
+
         public virtual void Die()
         {
             Cleanup();
             OrganismDatabase.RemoveMember(gameObject);
             Destroy(gameObject);
         }
-        
+
         public virtual void ShowPanel(bool value)
         {
-            SetInfoPanelVisibility(value);
+            InfoPanelVisibility = value;
             if (value)
                 infoPanel.SetActive(true);
             else
                 infoPanel.SetActive(false);
-        }
-        
-        private bool GetInfoPanelVisibility()
-        {
-            if (gameObject.CompareTag("Plant"))
-                return GameManager.PlantPanelsShowing;
-            else if (gameObject.CompareTag("Herbivore"))
-                return GameManager.HerbivorePanelsShowing;
-            else
-                return GameManager.CarnivorePanelsShowing;
-        }
-
-        private void SetInfoPanelVisibility(bool value)
-        {
-            if (gameObject.CompareTag("Plant"))
-                GameManager.PlantPanelsShowing = value;
-            else if (gameObject.CompareTag("Herbivore"))
-                GameManager.HerbivorePanelsShowing = value;
-            else
-                GameManager.CarnivorePanelsShowing = value;
         }
     }
 }
