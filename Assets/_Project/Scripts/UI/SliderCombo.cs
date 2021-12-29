@@ -21,7 +21,7 @@ namespace FoodChain.UI
         
         private string PercentString(float value)
         {
-            return $"{value * 100}%";
+            return $"{(value * 100).ToString("F")}%";
         }
     }
 }
