@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DeerAnimalTemplate
   m_EditorClassIdentifier: 
   offspringPrefab: {fileID: 1000014060781432, guid: aa79f8e11b1752f4b81b6a7a84d83070, type: 3}
-  reproductionCooldown: 10
+  reproductionCooldown: 8
   foodSourceTag: Plant
   foodSourcePhasePreference: 010000000000000002000000
   energyCostPerSecond: 0.02

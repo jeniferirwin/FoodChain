@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   energyPercentValue: 0.4
   phaseLengths:
-  - 10
-  - 30
+  - 7
+  - 35
   - 10
   phaseScales:
   - {x: 0.4, y: 0.4, z: 0.4}

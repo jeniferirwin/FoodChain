@@ -16,7 +16,7 @@ MonoBehaviour:
   reproductionCooldown: 25
   foodSourceTag: Herbivore
   foodSourcePhasePreference: 020000000100000000000000
-  energyCostPerSecond: 0.01
+  energyCostPerSecond: 0.015
   reproductiveEnergyMinimum: 0.55
   reproductiveEnergyCost: 0.4
   hungerEnergyThreshold: 0.6

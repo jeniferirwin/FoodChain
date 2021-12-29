@@ -751,6 +751,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2458802827399077506, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2458802827399077506, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2458802827399077506, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 3279662904170612018}
+    - target: {fileID: 2458802827399077506, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 2458802827399077507, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -985,3 +1001,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+--- !u!1 &3279662904170612018 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2458802827401624460, guid: bfd6b84d25804ba4c98033eaa8fc3d40, type: 3}
+  m_PrefabInstance: {fileID: 1125011690860215998}
+  m_PrefabAsset: {fileID: 0}
