@@ -10,6 +10,7 @@ namespace FoodChain.Life
         public event Action<PercentPack> OnAgeTicked = delegate { };
         public event Action OnLifeOver = delegate { };
 
+        // ENCAPSULATION
         public Vector3 CurrentPhaseScale { get { return _phaseScales[_currentPhase]; } }
         public Material CurrentPhaseMaterial { get { return _phaseMaterials[_currentPhase]; } }
         public int CurrentPhase { get { return _currentPhase; } }
