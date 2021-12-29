@@ -8,6 +8,9 @@ namespace FoodChain.Core
         public static bool HerbivorePanelsShowing { get; set; }
         public static bool CarnivorePanelsShowing { get; set; }
         
+        public ScriptableObject wolfOrgContainer;
+        public ScriptableObject wolfAniContainer;
+        
         private void Awake()
         {
             PlantPanelsShowing = true;
